@@ -108,6 +108,9 @@ void EnergyMonitor::calcVI(int crossings, int timeout)
     //-----------------------------------------------------------------------------
     // B) Apply digital high pass filters to remove 2.5V DC offset (centered on 0V).
     //-----------------------------------------------------------------------------
+	
+	// This formula comes from high-pass filter circuit analysis 
+	// http://en.wikipedia.org/wiki/High-pass_filter 
     filteredV = 0.996*(lastFilteredV+(sampleV-lastSampleV));
     filteredI = 0.996*(lastFilteredI+(sampleI-lastSampleI));
    
