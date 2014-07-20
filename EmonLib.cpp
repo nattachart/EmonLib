@@ -109,8 +109,10 @@ void EnergyMonitor::calcVI(int crossings, int timeout)
     // B) Apply digital high pass filters to remove 2.5V DC offset (centered on 0V).
     //-----------------------------------------------------------------------------
 	
-	// This formula comes from high-pass filter circuit analysis 
-	// http://en.wikipedia.org/wiki/High-pass_filter 
+	/*ANNOTED 
+	This formula comes from high-pass filter circuit analysis 
+	[REF] http://en.wikipedia.org/wiki/High-pass_filter 
+	*/
     filteredV = 0.996*(lastFilteredV+(sampleV-lastSampleV));
     filteredI = 0.996*(lastFilteredI+(sampleI-lastSampleI));
    
@@ -156,6 +158,10 @@ void EnergyMonitor::calcVI(int crossings, int timeout)
   //Calculation of the root of the mean of the voltage and current squared (rms)
   //Calibration coeficients applied. 
   
+  /*ANNOTED
+  V_RATIO and I_RATIO are the coefficients to convert RMS values of the samples to RMS values in volts and amperes.
+  SUPPLYVOLTAGE comes from the result of readVcc(), which shows the calculation there (in readVcc()'s definition).
+  */
   double V_RATIO = VCAL *((SUPPLYVOLTAGE/1000.0) / (ADC_COUNTS));
   Vrms = V_RATIO * sqrt(sumV / numberOfSamples); 
   
@@ -179,7 +185,7 @@ double EnergyMonitor::calcIrms(int NUMBER_OF_SAMPLES)
 {
   
    #if defined emonTxV3
-	int SUPPLYVOLTAGE=3300;
+	int SUPPLYVOLTAGE=3300; //ANNOTED it's always 3.3v for emonTxV3 architecture.
    #else 
 	int SUPPLYVOLTAGE = readVcc();
    #endif
@@ -251,7 +257,7 @@ long EnergyMonitor::readVcc() {
   while (bit_is_set(ADCSRA,ADSC));
   result = ADCL;
   result |= ADCH<<8;
-  result = 1126400L / result;                     //1100mV*1024 ADC steps http://openenergymonitor.org/emon/node/1186
+  result = 1126400L / result;                     //1100mV*1024 ADC steps [REF] http://openenergymonitor.org/emon/node/1186
   return result;
  #elif defined(__arm__)
   return (3300);                                  //Arduino Due
